@@ -1,0 +1,28 @@
+{
+  "name": "daily-tasker",
+  "version": "1.0.0",
+  "description": "Activity Tracker",
+  "main": "app.js",
+  "scripts": {
+    "start": "node app.js",
+    "dev": "nodemon app.js"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/miles0007/daily-tasker.git"
+  },
+  "author": "Kavin",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/miles0007/daily-tasker/issues"
+  },
+  "homepage": "https://github.com/miles0007/daily-tasker#readme",
+  "dependencies": {
+    "ajv": "^6.12.4",
+    "express": "^4.17.1",
+    "mongoose": "^5.13.3"
+  },
+  "devDependencies": {
+    "nodemon": "^2.0.12"
+  }
+}
