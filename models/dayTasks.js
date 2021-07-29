@@ -18,6 +18,11 @@ const dayTaskSchema = mongoose.Schema({
         Task_Type: {
             type: String,
             required: true
+        },
+        Duration: {
+            type: Number,
+            required: true,
+            default: 0
         }
     }]
 })

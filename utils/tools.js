@@ -31,9 +31,13 @@ const insertSchema = {
                     },
                     Task_Type: {
                         type: "string"
+                    },
+                    Duration: {
+                        type: "integer",
+                        default: 0
                     }
                 },
-                required: ["Task_Name","Task_Type"]
+                required: ["Task_Name","Task_Type","Duration"]
             }
         }
     },
