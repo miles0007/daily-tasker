@@ -1,7 +1,8 @@
 
-const { dayTask } = require("../models/dayTasks");
+const { dayTask } = require("../models/tasks");
+const notifyTodayTask = require("../utils/day_validate");
 const { tasksAverage, taskSum } = require("../utils/filter");
-const validateSchema = require("../utils/tools")
+const {validateSchema, tools } = require("../utils/tools")
 
 const curr_date = () => new Date().toJSON().slice(0,10);
 
@@ -10,18 +11,17 @@ const home = (req, res) => {
 }
 
 const makeDailyTask = async (req, res) => {
-    const user = req.body.user;
     const date = req.body.date || curr_date();
     const tasks = req.body.tasks || [];
 
     const data_content = validateSchema("addschema", req.body);
     if (data_content) {
         try{
-            let taskPresent = await dayTask.findDayTaskByUser(user, date);
+            let taskPresent = await dayTask.findDayTaskByUser(req.user_id, date);
             if (taskPresent) {
                 res.json({"message": "Already Present Try to insert", "code": 201})
             } else {
-                const userTaskToday = new dayTask({ user, date, tasks });
+                const userTaskToday = new dayTask({ user: req.user_id, date, tasks });
                 await userTaskToday.save()
                 res.json({"message": "success", "code": 200})
             }
@@ -36,13 +36,12 @@ const makeDailyTask = async (req, res) => {
 
 const insertTask = async (req, res) => {
     const body = Object.assign({}, req.body)
-    const user = body.user
     delete body.user
 
     const data_content = validateSchema("insertschema",req.body)
     if (data_content) {
         try {
-            let taskObj = await dayTask.findDayTaskByUser(user, req.body.date||curr_date());
+            let taskObj = await dayTask.findDayTaskByUser(req.user_id, req.body.date||curr_date());
             if (taskObj) {
                 for (let task=0; task < body.tasks.length; task++) {
                     taskObj.tasks.push(body.tasks[task])
@@ -61,21 +60,27 @@ const insertTask = async (req, res) => {
 }
 
 const getAccumulatedList = async (req, res) => {
-    if (req.query.user) {
-        const result = await tasksAverage(req.query.user)
-        res.json({result: result})
-    } else {
-        res.json({message: 'user argument is missing'})
-    }
+    const result = await tasksAverage(req.user_id)
+    res.json({result: result})
 }
 
 const getTimingList = async (req, res) => {
-    if (req.query.user) {
-        const result = await taskSum(req.query.user)
-        res.json({result: result})
-    } else {
-        res.json({message: 'user argument is missing'})
-    }
+    const result = await taskSum(req.user_id)
+    res.json({result: result})
 }
 
-module.exports = { home, makeDailyTask, insertTask, getAccumulatedList, getTimingList }
+const getTask = async (req, res) => {
+    let user = req.query.user;
+    let task = await notifyTodayTask(user);
+    console.log(JSON.stringify(task));
+    res.json(task)
+}
+
+const missionAdd = async (req, res) => {
+
+}
+
+
+module.exports = { 
+    home, makeDailyTask, insertTask, getAccumulatedList, 
+    getTimingList, getTask, missionAdd }

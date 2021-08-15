@@ -3,8 +3,9 @@ const mongoose = require('mongoose');
 
 const dayTaskSchema = mongoose.Schema({
     user: {
-        type: String,
-        required: true
+        type: mongoose.Schema.Types.ObjectId,
+        required: true,
+        ref: "User"
     },
     date: {
         type: Date,
@@ -27,10 +28,15 @@ const dayTaskSchema = mongoose.Schema({
     }]
 })
 
-dayTaskSchema.statics.findDayTaskByUser = async function (username, date) {
-  const todayTask = await dayTask.findOne({ user: username, date: date });
+dayTaskSchema.statics.findDayTaskByUser = async function (user_id, date) {
+  const todayTask = await dayTask.findOne({ user: user_id, date: date });
   return todayTask;
 };
+
+dayTaskSchema.statics.findAllUsersTask = async function(date) {
+    const tasks = await dayTask.find({ date: date});
+    return tasks;
+} 
 
 const dayTask = mongoose.model('dayTasks',dayTaskSchema);
 
